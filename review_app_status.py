@@ -53,7 +53,7 @@ def _check_review_app_deployment_status(
         raise ValueError("Interval can't be greater than create_timeout.")
 
     while timeout > 0:
-        r = requests.get(f"https://api.heroku.com/apps/{review_app_name}/review-app")
+        r = _make_heroku_api_request(f"https://api.heroku.com/apps/{review_app_name}/review-app")
         review_app_status = r.status
         logger.info(f"Review app status: {review_app_status}")
         if review_app_status in 'created':
