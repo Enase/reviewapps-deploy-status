@@ -36,13 +36,10 @@ class Args:
 
 def _make_heroku_api_request(url: str, heroku_api_key: str) -> dict:
     headers = {
-        "Content-Type": "application/json",
-        "Accept": "application/vnd.heroku+json",
+        "Accept": "application/vnd.heroku+json; version=3",
         "Authorization": f"Bearer {heroku_api_key}",
     }
 
-    logger.info(f"url: {url}")
-    logger.info(f"heroku_api_key: {heroku_api_key}")
     r = requests.get(url, headers=headers)
     r.raise_for_status()
     return r.json()
@@ -59,7 +56,7 @@ def _check_review_app_deployment_status(
             f"https://api.heroku.com/apps/{review_app_name}/review-app",
             heroku_api_key
         )
-        review_app_status = r.status
+        review_app_status = r.get('status')
         logger.info(f"Review app status: {review_app_status}")
         if review_app_status in 'created':
             return
