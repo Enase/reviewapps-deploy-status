@@ -47,13 +47,16 @@ def _make_heroku_api_request(url: str, heroku_api_key: str) -> dict:
 
 
 def _check_review_app_deployment_status(
-  review_app_name: str, timeout: int, interval: int
+  review_app_name: str, heroku_api_key: str, timeout: int, interval: int
 ):
     if interval > timeout:
         raise ValueError("Interval can't be greater than create_timeout.")
 
     while timeout > 0:
-        r = _make_heroku_api_request(f"https://api.heroku.com/apps/{review_app_name}/review-app")
+        r = _make_heroku_api_request(
+            f"https://api.heroku.com/apps/{review_app_name}/review-app",
+            heroku_api_key
+        )
         review_app_status = r.status
         logger.info(f"Review app status: {review_app_status}")
         if review_app_status in 'created':
@@ -90,6 +93,7 @@ def main() -> None:
     # Check the HTTP response from app URL
     _check_review_app_deployment_status(
         review_app_name=review_app_name,
+        heroku_api_key=args.heroku_api_key,
         timeout=args.create_timeout,
         interval=args.interval,
     )
