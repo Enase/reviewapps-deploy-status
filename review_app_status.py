@@ -41,6 +41,8 @@ def _make_heroku_api_request(url: str, heroku_api_key: str) -> dict:
         "Authorization": f"Bearer {heroku_api_key}",
     }
 
+    logger.info(f"url: {url}")
+    logger.info(f"heroku_api_key: {heroku_api_key}")
     r = requests.get(url, headers=headers)
     r.raise_for_status()
     return r.json()
