@@ -53,6 +53,9 @@ class Args:
     # Max time to be spent retrying for the response check
     publish_timeout: int
 
+    # App name
+    app_name: str
+
 
 def _make_github_api_request(url: str) -> dict:
     """Make github API request with `deployment` event specific headers.
@@ -96,7 +99,7 @@ def _get_github_deployment_status_url(
                 return deployment["statuses_url"]
         time.sleep(interval)
         timeout -= interval
-        logger.info(f"Waiting for deployments. Will check after {interval} seconds.")
+        logger.info(f"Waiting for deployments {deployments_url}. Will check after {interval} seconds.")
 
     raise ValueError("No deployment found for the lastest commit.")
 
