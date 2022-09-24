@@ -12,32 +12,21 @@ runs:
   image: 'Dockerfile'
 
 inputs:
-  checks:
-    description: Comma separated list of checks to perform.
-    required: false
-    # Default: Perform all checks
-    default: build, response
+  app_name:
+    description: Review app name.
+    required: true
+  heroku_api_key:
+    description: heroku api key.
+    required: true
   build_time_delay:
     description: Delay for the build stage of the review app.
     required: false
-    default: 5
-  load_time_delay:
-    description: Delay for the app to load and start serving after it is built.
-    required: false
-    default: 5
+    default: 40
   interval:
     description: Interval to repeat the deployment check in seconds.
     required: false
     default: 10
-  accepted_responses:
-    description: Comma separated status which can be accepted.
-    required: false
-    default: 200
-  deployments_timeout:
-    description: Maximum waiting time to fetch the deployments.
-    required: false
-    default: 120
-  publish_timeout:
+  create_timeout:
     description: Maximum time to spend retrying the HTTP response check until it succeeds.
     required: false
     default: 120
