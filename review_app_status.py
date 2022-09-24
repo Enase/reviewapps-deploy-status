@@ -95,11 +95,13 @@ def _get_github_deployment_status_url(
     while timeout > 0:
         deployments = _make_github_api_request(deployments_url)
         for deployment in deployments:
+            d_sha = deployment["sha"]
+            logger.info(f"d_sha: {d_sha}. commit_sha: {commit_sha}")
             if deployment["sha"] == commit_sha:
                 return deployment["statuses_url"]
         time.sleep(interval)
         timeout -= interval
-        logger.info(f"Waiting for deployments {deployments_url}. Will check after {interval} seconds.")
+        logger.info(f"Waiting for deployments {deployments_url}. {commit_sha} Will check after {interval} seconds.")
 
     raise ValueError("No deployment found for the lastest commit.")
 
@@ -176,6 +178,7 @@ def main() -> None:
         load_time_delay=int(os.environ["INPUT_LOAD_TIME_DELAY"]),
         interval=int(os.environ["INPUT_INTERVAL"]),
         deployments_timeout=int(os.environ["INPUT_DEPLOYMENTS_TIMEOUT"]),
+        app_name=str(os.environ["INPUT_APP_NAME"]),
         publish_timeout=int(os.environ["INPUT_PUBLISH_TIMEOUT"]),
         accepted_responses=[
             int(x.strip()) for x in os.environ["INPUT_ACCEPTED_RESPONSES"].split(",")
@@ -216,7 +219,7 @@ def main() -> None:
         logger.info(f"Load time delay: {args.load_time_delay} seconds")
         time.sleep(args.load_time_delay)
 
-        review_app_name = reviewapp_build_data["environment"]
+        review_app_name = args.app_name
         review_app_url = f"https://{review_app_name}.herokuapp.com"
 
         # Check the HTTP response from app URL
