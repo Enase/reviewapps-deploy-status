@@ -54,7 +54,7 @@ def _check_review_app_deployment_status(
 
     while timeout > 0:
         r = _make_heroku_api_request(
-            f"https://api.heroku.com/apps/{review_app_name}/review-app",
+            f"https://api.heroku.com/review-apps/{review_app_name}",
             heroku_api_key
         )
         review_app_status = r.status
