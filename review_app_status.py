@@ -63,6 +63,8 @@ def _check_review_app_response(review_app_name: str, interval: int, response_cod
         if r.status_code == response_code and _check_response_has_line(r, response_string):
             return
 
+        logger.info(f"Review app status code: {r.status_code}")
+
         time.sleep(interval)
         frontend_timeout -= interval
 
