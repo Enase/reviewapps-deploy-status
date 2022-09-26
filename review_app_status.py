@@ -31,6 +31,8 @@ class Args:
 
     # App name
     app_name: str
+    response_code: int
+    response_string: str
     heroku_api_key: str
 
 
@@ -45,8 +47,32 @@ def _make_heroku_api_request(url: str, heroku_api_key: str) -> dict:
     return r.json()
 
 
+def _check_response_has_line(response, line):
+    for c in response.iter_lines():
+        if line in str(c):
+            return True
+    return False
+
+
+def _check_review_app_response(review_app_name: str, interval: int, response_code: int, response_string: str):
+    review_app_url = f"https://{review_app_name}.herokuapp.com"
+
+    frontend_timeout = 60
+    while frontend_timeout > 0:
+        r = requests.get(review_app_url)
+        if r.status_code == response_code and _check_response_has_line(r, response_string):
+            return
+
+        time.sleep(interval)
+        frontend_timeout -= interval
+
+    raise TimeoutError(
+        f"Did not get any of the accepted response in the given time."
+    )
+
+
 def _check_review_app_deployment_status(
-  review_app_name: str, heroku_api_key: str, timeout: int, interval: int
+        review_app_name: str, heroku_api_key: str, timeout: int, interval: int
 ):
     if interval > timeout:
         raise ValueError("Interval can't be greater than create_timeout.")
@@ -78,6 +104,8 @@ def main() -> None:
         build_time_delay=int(os.environ["INPUT_BUILD_TIME_DELAY"]),
         interval=int(os.environ["INPUT_INTERVAL"]),
         app_name=str(os.environ["INPUT_APP_NAME"]),
+        response_code=int(os.environ["INPUT_RESPONSE_CODE"]),
+        response_string=str(os.environ["INPUT_RESPONSE_STRING"]),
         heroku_api_key=str(os.environ["INPUT_HEROKU_API_KEY"]),
         create_timeout=int(os.environ["INPUT_CREATE_TIMEOUT"]),
     )
@@ -96,7 +124,12 @@ def main() -> None:
         timeout=args.create_timeout,
         interval=args.interval,
     )
-
+    _check_review_app_response(
+        review_app_name=review_app_name,
+        interval=args.interval,
+        response_code=args.response_code,
+        response_string=args.response_string,
+    )
     print(f"::set-output name=review_app_name::{review_app_name}")
     print(f"::set-output name=review_app_url::{review_app_url}")
     print("Successful")

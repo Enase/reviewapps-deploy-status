@@ -15,6 +15,10 @@ inputs:
   app_name:
     description: Review app name.
     required: true
+  response_code:
+    required: true
+  response_string:
+    required: true
   heroku_api_key:
     description: heroku api key.
     required: true
