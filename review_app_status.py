@@ -86,8 +86,13 @@ def _check_review_app_deployment_status(
         )
         review_app_status = r.get('status')
         logger.info(f"Review app status: {review_app_status}")
-        if review_app_status in 'created':
+
+        if review_app_status == 'created':
             return
+
+        if review_app_status == 'errored':
+            raise ValueError("Review App status errored!")
+
         time.sleep(interval)
         timeout -= interval
 
