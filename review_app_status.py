@@ -137,8 +137,6 @@ def main() -> None:
         response_code=args.response_code,
         response_string=args.response_string,
     )
-    print(f"::set-output name=review_app_name::{review_app_name}")
-    print(f"::set-output name=review_app_url::{review_app_url}")
     print("Successful")
 
 
